@@ -1,0 +1,49 @@
+# backend/.gitignore
+
+# Dependency directories
+node_modules/
+
+# Environment variables file
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+firebase-debug.log*
+firebase-debug.*.log*
+
+# Firebase cache (if you initialize Firebase Admin in a way that creates this)
+# .firebase/
+
+# Sensitive configuration files
+# Specific Firebase Admin SDK JSON key - MOST SECURE if you know the exact name
+config/myapp-e88d6-firebase-adminsdk-z56sz-7b6696604b.json
+config/*.json
+backend/config/myapp-e88d6-firebase-adminsdk-*.json
+
+# More generic rule (USE WITH CAUTION - ensure no other needed JSONs are in 'config/')
+# config/*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage
+.nyc_output
+
+# Compiled TypeScript/JavaScript output (if applicable)
+dist/
+build/
+
+# dataconnect generated files (if you use Firebase DataConnect for backend)
+# .dataconnect

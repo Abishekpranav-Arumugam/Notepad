@@ -1,0 +1,33 @@
+runtime: nodejs18 # Or your preferred Node.js version supported by GAE
+service: backend
+instance_class: F1 # Adjust as needed
+
+entrypoint: npm start # Executes "node server.js"
+
+env_variables:
+  NODE_ENV: "production"
+  PORT: 8080 # GAE provides the actual port via process.env.PORT
+
+  # --- Variables to be set during deployment (from your .env) ---
+  MONGO_URI: "mongodb+srv://abishekpranav2004:ironman@cluster0.fbgdqdd.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+  JWT_SECRET: "UbFx5e4Umr9JEalbvDwcXnQhsoeWUEKFZJAzWsXMzP4="
+  JWT_EXPIRE: "1h"
+  APP_NAME: "Rice Mart"
+
+  # --- Firebase ---
+  FIREBASE_SERVICE_ACCOUNT_KEY_PATH: "./config/myapp-e88d6-firebase-adminsdk-z56sz-7b6696604b.json"
+
+  # --- Email (Nodemailer) - BEWARE OF GAE STANDARD SMTP RESTRICTIONS ---
+  EMAIL_HOST: "smtp.gmail.com"
+  EMAIL_PORT: "587"
+  EMAIL_USER: "abishekpranav2004@gmail.com"
+  EMAIL_PASS: "geiskkqatbsomzib"
+  EMAIL_FROM: "\"Rice Mart\" <abishekpranav2004@gmail.com>"
+
+  # --- CORS --- ADDED THIS COMMENT BLOCK FOR CLARITY
+  FRONTEND_URL: "https://frontend-dot-samplereact-32360.appspot.com" # <<< INDENTED BY 2 SPACES & ADDED SPACE AFTER COLON
+
+
+automatic_scaling:
+  min_instances: 0
+  max_instances: 3

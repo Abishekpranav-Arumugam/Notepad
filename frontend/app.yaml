@@ -1,0 +1,26 @@
+runtime: nodejs18 # Can use nodejs to serve static files or specialized static handlers
+service: frontend   # This is crucial for the URL structure
+instance_class: F1  # Or B1 for basic scaling (often suitable for frontends)
+
+handlers:
+  # Serve static assets from the 'build/static' folder
+  # Create React App typically puts JS/CSS chunks here
+  - url: /static
+    static_dir: build/static
+
+  # Serve other specific static files from the root of the 'build' folder
+  # (e.g., manifest.json, favicon.ico, robots.txt, images)
+  - url: /(.*\.(json|ico|png|jpg|jpeg|gif|svg|txt|map|webmanifest))$
+    static_files: build/\1
+    upload: build/(.*\.(json|ico|png|jpg|jpeg|gif|svg|txt|map|webmanifest))$
+
+  # Catch-all handler to serve 'index.html' for client-side routing (React Router)
+  # Any request not matching above will be served index.html
+  - url: /.*
+    static_files: build/index.html
+    upload: build/index.html
+
+# Optional: If your frontend build process needs environment variables
+# (e.g., REACT_APP_API_URL). These are build-time for CRA unless handled differently.
+# env_variables:
+#   REACT_APP_BACKEND_URL: "https://backend-dot-samplereact-32360.appspot.com/api"

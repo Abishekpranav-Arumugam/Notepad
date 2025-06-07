@@ -1,0 +1,9 @@
+/* Example: index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Add any custom base styles here if needed */
+body {
+  @apply font-sans antialiased;
+}

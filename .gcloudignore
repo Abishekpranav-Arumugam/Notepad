@@ -1,0 +1,91 @@
+# Default gcloud ignore patterns (usually included implicitly, but good to be explicit)
+.gcloudignore
+app.yaml # Individual app.yaml files in service dirs WILL be uploaded, this is for a root app.yaml if any
+dispatch.yaml
+index.yaml
+cron.yaml
+queue.yaml
+dos.yaml
+
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Git files and configuration
+.git/
+.gitignore
+
+# Local environment configuration files (SECRETS!)
+.env
+.env.*
+*.env
+
+# Operating System generated files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# IDE / Editor specific folders
+.idea/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Log files
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build output from frontend (if GAE builds it, these local copies aren't needed)
+# If your frontend/app.yaml serves PRE-BUILT files and GAE does NOT run 'npm run build'
+# for the frontend, then you should NOT ignore these.
+# Assuming GAE runs 'npm run build' for the frontend service:
+# frontend/build/
+frontend/dist/
+# frontend/.next/ # If using Next.js and GAE isn't doing the full Next.js build/serve
+
+# Optional NPM package files
+*.tgz
+
+# Yarn lock files and cache (if you use Yarn and GAE uses npm, or vice-versa)
+# yarn.lock # Keep if GAE uses yarn, ignore if GAE uses npm and you have both
+# .pnp.js
+# .pnp.cjs
+# .yarn/cache
+# .yarn/install-state.gz
+# .yarn/patches
+# .yarn/plugins
+# .yarn/releases
+# .yarn/sdks
+# .yarn/versions
+
+# Test files and coverage reports (usually not needed for production deployment)
+coverage/
+frontend/src/**/*.test.js
+frontend/src/**/*.spec.js
+backend/test/
+backend/**/*.test.js
+backend/**/*.spec.js
+
+# Firebase Admin SDK Key file:
+# The backend/app.yaml specifies:
+# FIREBASE_SERVICE_ACCOUNT_KEY_PATH: "./config/myapp-e88d6-firebase-adminsdk-z56sz-7b6696604b.json"
+# This means the file `backend/config/myapp-e88d6-firebase-adminsdk-z56sz-7b6696604b.json`
+# MUST BE UPLOADED with the backend service.
+# Therefore, DO NOT add `backend/config/myapp-e88d6-firebase-adminsdk-z56sz-7b6696604b.json`
+# or a general `*.json` pattern that would catch it to this .gcloudignore file.
+#
+# If you were using a different method (e.g., storing the JSON content in an env var),
+# then you would ignore the local key file.
+# Example of ignoring a specific key file if it were at the root and not needed:
+# root-service-account-key.json
+
+# Any other project-specific files or directories that should not be deployed.
+# e.g., design mockups, temporary files, etc.
+# temp/
+# docs/
