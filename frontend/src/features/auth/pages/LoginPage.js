@@ -1,13 +1,14 @@
+// src/features/auth/pages/LoginPage.js
 import React, { useState } from 'react';
 import api from '../../../services/api';
 import { useNavigate, Link } from 'react-router-dom';
-import { auth, googleProvider } from '../../../services/firebase'; // <-- UNCOMMENTED
-import { signInWithEmailAndPassword, getIdToken, signInWithPopup } from "firebase/auth"; // <-- UNCOMMENTED
-import { FcGoogle } from 'react-icons/fc'; // <-- ADDED
+import { auth, googleProvider } from '../../../services/firebase';
+import { signInWithEmailAndPassword, getIdToken, signInWithPopup } from "firebase/auth";
+import { FcGoogle } from 'react-icons/fc';
 import { FaSpinner, FaSignInAlt } from 'react-icons/fa';
 import authIllustrationImage from '../../../assets/images/auth11.jpg';
 
-function LoginPage({ setIsAuthenticated }) {
+function LoginPage({ setIsAuthenticated }) { // Prop is passed but we no longer use it
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
@@ -25,7 +26,9 @@ function LoginPage({ setIsAuthenticated }) {
 
             if (res.data.token) {
                  localStorage.setItem('token', res.data.token);
-                 navigate('/home');
+                 // The "storage" event listener in App.js will now handle the state change.
+                 // We add a tiny delay to ensure the event fires before navigating.
+                 setTimeout(() => navigate('/home'), 50);
              } else { setError('Login succeeded but failed to get application session.'); }
         } catch (err) {
              if (err.code?.startsWith('auth/')) { setError('Invalid email or password.'); }
@@ -36,7 +39,6 @@ function LoginPage({ setIsAuthenticated }) {
         }
     };
 
-    // --- ADDED GOOGLE SIGN-IN HANDLER ---
     const handleGoogleSignIn = async () => {
         setError(null);
         setIsLoading(true);
@@ -48,7 +50,9 @@ function LoginPage({ setIsAuthenticated }) {
 
              if (res.data.token) {
                  localStorage.setItem('token', res.data.token);
-                 navigate('/home');
+                 // The "storage" event listener in App.js will now handle the state change.
+                 // We add a tiny delay to ensure the event fires before navigating.
+                 setTimeout(() => navigate('/home'), 50);
              } else { setError('Google Sign-In successful but no application token received.');}
         } catch (err) {
              if (err.code === 'auth/popup-closed-by-user') { /* Silent */ }
@@ -81,15 +85,9 @@ function LoginPage({ setIsAuthenticated }) {
                             <img className="h-full w-full object-cover" src={authIllustrationImage} alt="MyNotepad branding illustration" />
                         </div>
                         <div className="p-6 sm:p-8">
-                            <div>
-                                <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Sign In</h2>
-                            </div>
+                            <div><h2 className="text-center text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">Sign In</h2></div>
                             <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-6">
-                                {error && (
-                                    <div className="rounded-md border border-red-300 bg-red-100 p-3 text-red-700">
-                                        <p className="text-sm font-medium">{error}</p>
-                                    </div>
-                                )}
+                                {error && (<div className="rounded-md border border-red-300 bg-red-100 p-3 text-red-700"><p className="text-sm font-medium">{error}</p></div>)}
                                 <div>
                                     <label htmlFor="email-login" className="sr-only">Email address</label>
                                     <input id="email-login" name="email" type="email" autoComplete="email" required className="block w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-3 text-gray-900 placeholder-gray-500 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm" placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} disabled={isLoading} />
@@ -98,11 +96,8 @@ function LoginPage({ setIsAuthenticated }) {
                                     <label htmlFor="password-login" className="sr-only">Password</label>
                                     <input id="password-login" name="password" type="password" autoComplete="current-password" required className="block w-full appearance-none rounded-md border border-gray-300 bg-white px-3 py-3 text-gray-900 placeholder-gray-500 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} disabled={isLoading} />
                                 </div>
-                                {/* --- ADDED FORGOT PASSWORD LINK --- */}
                                 <div className="flex items-center justify-end pt-1 text-sm">
-                                    <Link to="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500 hover:underline">
-                                        Forgot your password?
-                                    </Link>
+                                    <Link to="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500 hover:underline">Forgot your password?</Link>
                                 </div>
                                 <div>
                                     <button type="submit" disabled={isLoading} className={`group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-3 text-sm font-medium text-white shadow-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}>
@@ -110,7 +105,6 @@ function LoginPage({ setIsAuthenticated }) {
                                         {isLoading ? 'Signing in...' : 'Sign in'}
                                     </button>
                                 </div>
-                                {/* --- ADDED GOOGLE SIGN-IN BUTTON --- */}
                                 <div className="relative my-6">
                                     <div className="absolute inset-0 flex items-center" aria-hidden="true"><div className="w-full border-t border-gray-300" /></div>
                                     <div className="relative flex justify-center text-sm"><span className="bg-white/80 px-2 text-gray-500 backdrop-blur-[2px] rounded-sm">OR</span></div>
