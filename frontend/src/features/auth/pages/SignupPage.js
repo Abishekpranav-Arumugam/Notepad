@@ -2,13 +2,10 @@
 import React, { useState } from 'react';
 import api from '../../../services/api';
 import { useNavigate, Link } from 'react-router-dom';
-// import { auth, googleProvider } from '../../../services/firebase';
-// import { signInWithPopup, getIdToken } from "firebase/auth";
-// import { FcGoogle } from 'react-icons/fc';
 import { FaSpinner, FaUserPlus } from 'react-icons/fa';
 import authIllustrationImage from '../../../assets/images/auth11.jpg';
 
-function SignupPage({ setIsAuthenticated }) {
+function SignupPage({ setIsAuthenticated }) { // The prop can remain for now, but we won't use it
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -16,7 +13,6 @@ function SignupPage({ setIsAuthenticated }) {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    // ... (handleSignup, handleSubmit functions remain the same) ...
     const handleSignup = async (providedUsername, providedEmail, providedPassword) => {
         setIsLoading(true);
         setError(null);
@@ -24,7 +20,7 @@ function SignupPage({ setIsAuthenticated }) {
             const res = await api.post('/auth/signup', { username: providedUsername, email: providedEmail, password: providedPassword });
             if (res.data.token) {
                 localStorage.setItem('token', res.data.token);
-                setIsAuthenticated(true);
+                // setIsAuthenticated(true); // <-- THIS LINE IS REMOVED. THIS IS THE FIX.
                 navigate('/home');
             } else {
                 setError("Signup successful, but failed to initialize session. Please try logging in.");
@@ -35,34 +31,6 @@ function SignupPage({ setIsAuthenticated }) {
             setIsLoading(false);
         }
     };
-
-    /*
-    const handleGoogleSignIn = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const result = await signInWithPopup(auth, googleProvider);
-            const user = result.user;
-            const idToken = await getIdToken(user);
-            const res = await api.post('/auth/google', { token: idToken });
-
-            if (res.data.token) {
-                localStorage.setItem('token', res.data.token);
-                setIsAuthenticated(true);
-                navigate('/home');
-            } else {
-                setError('Google Sign-In/Up successful but no application token received from backend.');
-            }
-        } catch (err) {
-             if (err.code === 'auth/popup-closed-by-user') { }
-             else if (err.response?.data) { setError(err.response.data.msg || 'Backend validation failed after Google Sign-In.'); }
-             else if (err.code && err.code.startsWith('auth/')) { setError(`Google Sign-In failed: ${err.message} (${err.code})`); }
-             else { setError(err.message || 'Google Sign-In/Up failed. Please try again.'); }
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    */
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -80,7 +48,6 @@ function SignupPage({ setIsAuthenticated }) {
 
     return (
         <div className="flex flex-col lg:flex-row min-h-screen items-stretch bg-gradient-to-br from-purple-100 via-indigo-100 to-purple-500">
-            {/* Left Side: Full-height Image Column (Desktop Only) */}
             <div className="relative hidden lg:flex lg:w-1/2">
                 <img
                     className="absolute inset-0 h-full w-full object-cover"
@@ -89,12 +56,9 @@ function SignupPage({ setIsAuthenticated }) {
                 />
             </div>
 
-            {/* Right Side: Form Column (Full width on mobile, half on desktop) */}
             <div className="flex flex-1 flex-col justify-center items-center w-full lg:w-1/2 px-4 py-8 sm:py-12 sm:px-6 lg:px-20 xl:px-24">
-                <div className="mx-auto w-full max-w-sm"> {/* Removed lg:w-96, max-w-sm will apply */}
-                    {/* Whiter Transparent Card with overflow-hidden */}
+                <div className="mx-auto w-full max-w-sm">
                     <div className="w-full rounded-xl bg-white/80 shadow-2xl backdrop-blur-md overflow-hidden">
-                        {/* Image Inside Card (Mobile Only) */}
                         <div className="block lg:hidden w-full h-40 sm:h-48">
                             <img
                                 className="h-full w-full object-cover"
@@ -103,14 +67,13 @@ function SignupPage({ setIsAuthenticated }) {
                             />
                         </div>
 
-                        {/* Form Content Wrapper (for padding) */}
-                        <div className="p-6 sm:p-8"> {/* Adjusted padding slightly */}
+                        <div className="p-6 sm:p-8">
                             <div>
                                 <h2 className="text-center text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">
                                     Create Account
                                 </h2>
                             </div>
-                            <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-6"> {/* Adjusted mt */}
+                            <form onSubmit={handleSubmit} className="mt-6 sm:mt-8 space-y-6">
                                 {error && (
                                     <div className="rounded-md border border-red-300 bg-red-100 p-3 text-red-700">
                                         <p className="text-sm font-medium">{error}</p>
@@ -178,28 +141,6 @@ function SignupPage({ setIsAuthenticated }) {
                                         {isLoading ? 'Creating account...' : 'Sign Up'}
                                     </button>
                                 </div>
-
-                                {/* Google Sign In Button and OR divider commented out
-                                <div className="relative my-6">
-                                    <div className="absolute inset-0 flex items-center" aria-hidden="true">
-                                        <div className="w-full border-t border-gray-300" />
-                                    </div>
-                                    <div className="relative flex justify-center text-sm">
-                                        <span className="bg-white/80 px-2 text-gray-500 backdrop-blur-[2px] rounded-sm">OR</span>
-                                    </div>
-                                </div>
-                                <div>
-                                    <button
-                                        onClick={handleGoogleSignIn}
-                                        type="button"
-                                        disabled={isLoading}
-                                        className={`group relative flex w-full items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${isLoading ? 'cursor-not-allowed opacity-50' : ''}`}
-                                    >
-                                        <FcGoogle className="mr-3 -ml-1 h-5 w-5" aria-hidden="true" />
-                                        <span>Sign up with Google</span>
-                                    </button>
-                                </div>
-                                */}
                             </form>
                             <p className="mt-8 text-center text-sm text-gray-600">
                                 Already have an account?{' '}
@@ -207,10 +148,10 @@ function SignupPage({ setIsAuthenticated }) {
                                     Sign In
                                 </Link>
                             </p>
-                        </div> {/* End of Form Content Wrapper */}
-                    </div> {/* End of transparent card */}
-                </div> {/* End of mx-auto w-full ... div */}
-            </div> {/* End of Right Side Column */}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
