@@ -1,11 +1,16 @@
 import axios from 'axios';
 
-// CORRECT LOGIC:
-// 1. Use the URL from the environment variable if it exists (for Vercel).
-// 2. If not, it MUST be local development, so fall back to the localhost URL.
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// This logic now works for both local and production as per your requirement.
+// It will always use the URL from an environment variable.
+const API_BASE_URL = process.env.REACT_APP_API_URL;
 
-console.log(`API Base URL set to: ${API_BASE_URL}`); // This helps you debug!
+// Add a check to prevent the app from running without the URL configured.
+if (!API_BASE_URL) {
+  console.error("CRITICAL ERROR: REACT_APP_API_URL is not defined. The app cannot connect to the backend.");
+  // You could also throw an error or display a message to the user.
+}
+
+console.log(`API Base URL set to: ${API_BASE_URL}`);
 
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -13,6 +18,7 @@ const api = axios.create({
     'Content-Type': 'application/json',
   },
 });
+
 
 // --- Request Interceptor (Adds Auth Token) ---
 api.interceptors.request.use(
