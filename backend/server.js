@@ -25,8 +25,7 @@ try {
         console.log('Firebase Admin SDK Initialized with JSON credentials.');
     } else if (serviceAccountPath) {
         console.log(`Attempting to initialize Firebase Admin SDK with path: ${serviceAccountPath}`);
-        // When running on GAE, the path is relative to the service root (the 'backend' folder)
-        const fullPath = require('path').resolve(__dirname, serviceAccountPath); // More robust path resolution
+        const fullPath = require('path').resolve(__dirname, serviceAccountPath);
         const serviceAccount = require(fullPath);
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount)
@@ -37,7 +36,6 @@ try {
     }
 } catch (error) {
     console.error('!!! Firebase Admin SDK Initialization Failed:', error.message, error.stack);
-    // Consider if the app can run without Firebase Admin. If not, process.exit(1) might be appropriate.
 }
 // --- End Firebase Admin Initialization ---
 
@@ -47,32 +45,40 @@ connectDB();
 
 app.use(express.json({ extended: false }));
 
-// --- CORS Configuration ---
-const allowedOrigins = [];
+// --- CORS Configuration (Updated Block) ---
+const allowedOrigins = [
+    'http://localhost:3000' // Always allow local development
+];
 
-if (process.env.NODE_ENV === 'production' && process.env.FRONTEND_URL) {
+// Add the production URL from environment variables if it exists
+if (process.env.FRONTEND_URL) {
   allowedOrigins.push(process.env.FRONTEND_URL);
-  console.log(`CORS: Production mode. Allowing origin: ${process.env.FRONTEND_URL}`);
-} else {
-  // For local development, allow common frontend dev ports
-  allowedOrigins.push('http://localhost:3000'); // Create React App default
-  // Add any other local dev ports if needed, e.g., 'http://localhost:5173' for Vite
-  console.log(`CORS: Development mode. Allowing origins: ${allowedOrigins.join(', ')}`);
 }
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, or server-to-server)
-    // OR if the origin is in our allowed list
-    if (!origin || allowedOrigins.includes(origin)) {
+    // 'origin' is the URL of the site making the request
+
+    // Check if the incoming origin is a Vercel preview URL
+    const isVercelPreview = origin && origin.endsWith('.vercel.app');
+
+    // Allow the request if:
+    // 1. It has no origin (like Postman, curl, server-to-server)
+    // 2. Its origin is in our explicit `allowedOrigins` list
+    // 3. Its origin is a Vercel preview URL
+    if (!origin || allowedOrigins.includes(origin) || isVercelPreview) {
+      if (isVercelPreview && !allowedOrigins.includes(origin)) {
+        console.log(`CORS: Allowing Vercel preview origin: ${origin}`);
+      }
       callback(null, true);
     } else {
-      console.warn(`CORS: Origin '${origin}' not allowed. Allowed origins: ${allowedOrigins.join(', ')}`);
+      console.warn(`CORS: Blocking origin '${origin}'`);
       callback(new Error(`Origin '${origin}' not allowed by CORS`));
     }
   },
-  credentials: true, // Important if you're dealing with cookies or Authorization headers
+  credentials: true,
 };
+
 app.use(cors(corsOptions));
 // --- End CORS Configuration ---
 
@@ -83,10 +89,11 @@ app.use('/api/notes', require('./routes/notes'));
 
 app.get('/', (req, res) => res.send('Backend API for Samplereact is Running'));
 
-const PORT = process.env.PORT || 5000; // GAE provides PORT
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server for Samplereact started on port ${PORT}`);
+  console.log(`Allowed CORS origins: ${allowedOrigins.join(', ')}`);
   if (process.env.NODE_ENV === 'production') {
-    console.log(`Backend expecting frontend requests from: ${process.env.FRONTEND_URL}`);
+    console.log('...and all Vercel preview domains (*.vercel.app)');
   }
 });
