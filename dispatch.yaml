@@ -1,0 +1,9 @@
+# web_page/dispatch.yaml
+dispatch:
+  # Route all API calls to the 'api' (backend) service
+  - url: "*/api/*"
+    service: api
+
+  # Send all other traffic to the 'default' (frontend) service
+  - url: "*/*"
+    service: default

@@ -25,7 +25,7 @@ env_variables:
   EMAIL_FROM: "\"Rice Mart\" <abishekpranav2004@gmail.com>"
 
   # --- CORS --- ADDED THIS COMMENT BLOCK FOR CLARITY
-  FRONTEND_URL: "https://frontend-dot-samplereact-32360.appspot.com" # <<< INDENTED BY 2 SPACES & ADDED SPACE AFTER COLON
+  FRONTEND_URL: "https://flask-demo-app-460214.uc.r.appspot.com" # <<< INDENTED BY 2 SPACES & ADDED SPACE AFTER COLON
 
 
 automatic_scaling:
